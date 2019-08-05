@@ -80,3 +80,11 @@
       tags:
         - skip_ansible_lint # there isn't a module for this, command is idempotent
 
+    - name: Install lvm2 package.
+      apt:
+        name: lvm2
+        state: present
+
+    - name: update-alternatives for iptables-legacy.
+      command: "update-alternatives --set iptables /usr/sbin/iptables-legacy"
+

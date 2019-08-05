@@ -68,7 +68,8 @@ prepare_kubespray () {
 
   # Add configuration to inventory
   echo ${NODES[*]}
-  ansible-playbook k8s-configs.yaml --extra-vars "deployment_name=${DEPLOYMENT_NAME} k8s_nodes='${NODES[*]}' kubespray_remote_ssh_user='${REMOTE_SSH_USER}'"
+  ansible-playbook k8s-configs.yaml \
+      --extra-vars "deployment_name=${DEPLOYMENT_NAME} k8s_nodes='${NODES[*]}' kubespray_remote_ssh_user='${REMOTE_SSH_USER}'"
 }
 
 install_kubespray () {
