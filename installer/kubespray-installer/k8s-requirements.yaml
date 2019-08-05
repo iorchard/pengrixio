@@ -1,0 +1,82 @@
+---
+# Copyright 2017-present Open Networking Foundation
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+- hosts: all
+  gather_facts: False
+
+  tasks:
+    - name: Update apt-get
+      raw: sudo apt-get update -qq
+      tags:
+        - skip_ansible_lint # raw command in prep for python install
+
+    - name: Install python 2.7
+      raw: sudo apt-get install -qq python2.7
+      tags:
+        - skip_ansible_lint # raw command to install python
+
+    - name: Install prerequisites for using PPA repos
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+        cache_valid_time: 3600
+      loop:
+        - python-pycurl
+        - software-properties-common
+        - python-netaddr
+      register: task_result
+      until: task_result is success
+      retries: 3
+      delay: 5
+
+#    - name: Add Ansible PPA
+#      apt_repository:
+#        repo={{ item }}
+#      with_items:
+#        - "{{ ansible_apt_repo | default('ppa:ansible/ansible') }}"
+#      register: task_result
+#      until: task_result is success
+#      retries: 3
+#      delay: 5
+
+    - name: Make sure Ansible is newest version
+      apt:
+        name: "ansible"
+        update_cache: yes
+        cache_valid_time: 3600
+      register: task_result
+      until: task_result is success
+      retries: 3
+      delay: 5
+
+    - name: Enable ip forwarding
+      sysctl:
+        name: 'net.ipv4.ip_forward'
+        value: 1
+        sysctl_set: True
+        state: present
+        reload: yes
+
+    - name: Remove swapfile from /etc/fstab
+      mount:
+        name: swap
+        fstype: swap
+        state: absent
+
+    - name: Disable swap
+      command: "swapoff -a"
+      tags:
+        - skip_ansible_lint # there isn't a module for this, command is idempotent
+
