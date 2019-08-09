@@ -1,20 +1,5 @@
 #!/usr/bin/env bash
 #
-# Copyright 2017-present Open Networking Foundation
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-#
 # Installs Kubespray on remote target machines.
 #
 
@@ -26,6 +11,9 @@ get_kubespray () {
   # Cleanup Old Kubespray Installations
   echo "Cleaning Up Old Kubespray Installation"
   rm -rf kubespray
+
+  # Install git
+  sudo apt install -y git
 
   # Download Kubespray
   echo "Downloading Kubespray"
@@ -70,6 +58,17 @@ prepare_kubespray () {
   echo ${NODES[*]}
   ansible-playbook k8s-configs.yaml \
       --extra-vars "deployment_name=${DEPLOYMENT_NAME} k8s_nodes='${NODES[*]}' kubespray_remote_ssh_user='${REMOTE_SSH_USER}'"
+}
+
+replace_hostname () {
+  # kubespray changes hostname to node{1,2,3,...}
+  # Replace them to real hostnames
+  CONFIG_FILE="inventories/${DEPLOYMENT_NAME}/inventory.yml"
+  echo ${NODES[*]}
+  for i in ${!NODES[*]}
+  do
+    sed -ie s/node$(($i+1))/${NODES[$i]}/g ${CONFIG_FILE}
+  done
 }
 
 install_kubespray () {
@@ -118,13 +117,13 @@ source_kubeconfig () {
 }
 
 #
-# Checks if an arbitrary pod name is given during specifc
+# Checks if an arbitrary cluster name is given during specifc
 # operations.
 #
-check_pod_name () {
+check_cluster_name () {
   if [ -z "$DEPLOYMENT_NAME" ]
     then
-      echo "Missing option: podname" >&2
+      echo "Missing option: clustername" >&2
       echo " "
       display_help
       exit -1
@@ -135,23 +134,26 @@ check_pod_name () {
 # Displays the help menu.
 #
 display_help () {
-  echo "Usage: $0 {--get|--prepare|--install|--reset|--source|--help} [podname] [ip...] " >&2
+  echo "Usage: $0 {-g|-p|-r|-i|-R|-s|-h} [clustername] [ip...|hostname...]" >&2
   echo " "
   echo "   -h, --help              Display this help message."
   echo "   -g, --get               Get Kubespray git source."
   echo "   -p, --prepare           Prepare kubespray."
-  echo "   -i, --install           Install Kubespray on <podname>"
-  echo "   -r, --reset             Reset Kubespray on <podname>"
-  echo "   -s, --source            Source the Kubectl config for <podname>"
+  echo "   -r, --replace           Replace hostnames."
+  echo "   -i, --install           Install Kubespray on <clustername>"
+  echo "   -R, --reset             Reset Kubespray on <clustername>"
+  echo "   -s, --source            Source the Kubectl config for <clustername>"
   echo " "
-  echo "   podname                 An arbitrary name representing the pod"
+  echo "   clustername             An arbitrary name representing the cluster"
   echo "   ip                      The IP address of the remote node(s)"
   echo " "
   echo "Example usages:"
-  echo "   ./setup.sh -i podname 192.168.10.100 192.168.10.101 192.168.10.102"
-  echo "   ./setup.sh -i podname (default is 10.90.0.101 10.90.0.102 10.90.0.103)"
-  echo "   HOST_PREFIX='burrito' ./setup.sh -i podname (default is 10.90.0.101 10.90.0.102 10.90.0.103)"
-  echo "   source setup.sh -s podname"
+  echo "   KS_COMMIT=<kubespray_release_version> ./setup.sh -g clustername"
+  echo "   REMOTE_SSH_USER=orchard ./setup.sh -p clustername [ip...]"
+  echo "   ./setup.sh -r clustername [hostname...]"
+  echo "   ./setup.sh -i clustername"
+  echo "   ./setup.sh -R clustername"
+  echo "   ./setup.sh -s clustername"
 }
 
 #
@@ -169,7 +171,7 @@ shift 2
 DEFAULT_NODES=(10.90.0.101 10.90.0.102 10.90.0.103)
 NODES=("${@:-${DEFAULT_NODES[@]}}")
 
-REMOTE_SSH_USER="${REMOTE_SSH_USER:-cord}"
+REMOTE_SSH_USER="${REMOTE_SSH_USER:-orchard}"
 
 while :
 do
@@ -179,17 +181,22 @@ do
         exit 0
         ;;
     -p | --prepare)
-        check_pod_name
+        check_cluster_name
         prepare_kubespray
         exit 0
         ;;
+    -r | --replace)
+        check_cluster_name
+        replace_hostname
+        exit 0
+        ;;
     -i | --install)
-        check_pod_name
+        check_cluster_name
         install_kubespray
         exit 0
         ;;
-    -r | --reset)
-        check_pod_name
+    -R | --reset)
+        check_cluster_name
         reset_kubespray
         exit 0
         ;;
@@ -198,7 +205,7 @@ do
         exit 0
         ;;
     -s | --source)
-        check_pod_name
+        check_cluster_name
         source_kubeconfig
         break
         ;;
