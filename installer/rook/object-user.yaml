@@ -1,0 +1,8 @@
+apiVersion: ceph.rook.io/v1
+kind: CephObjectStoreUser
+metadata:
+  name: pengrixio
+  namespace: rook-ceph
+spec:
+  store: image-store
+  displayName: "Object Store User - pengrixio"
