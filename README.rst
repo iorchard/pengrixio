@@ -28,3 +28,5 @@ API First Design
 https://medium.com/@ryangordon210/building-python-microservices-part-i-getting-started-792fa615608
 
 https://medium.com/adobetech/three-principles-of-api-first-design-fa6666d9f694
+
+https://owncloud.org/news/running-owncloud-in-kubernetes-with-rook-ceph-storage/
