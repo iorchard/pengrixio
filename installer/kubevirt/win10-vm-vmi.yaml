@@ -1,0 +1,30 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachineInstance
+metadata:
+  name: win10-vm
+  labels:
+    name: win10-vm
+spec:
+  domain:
+    devices:
+      disks:
+      - name: win10-disk
+        disk: {}
+      - name: win10-iso
+        cdrom:
+          bus: sata
+    machine:
+      type: ""
+    resources:
+      requests:
+        memory: 2G
+  terminationGracePeriodSeconds: 0
+  volumes:
+  - name: win10-disk
+    persistentVolumeClaim:
+      claimName: win10-disk
+  - name: win10-iso
+    persistentVolumeClaim:
+      claimName: win10-iso
+...

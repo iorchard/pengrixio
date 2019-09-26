@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pengrixio-tools
+  namespace: pengrixio
+  labels:
+    app: pengrixio-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pengrixio-tools
+  template:
+    metadata:
+      labels:
+        app: pengrixio-tools
+    spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+      - name: pengrixio-tools
+        image: debian:buster-slim
+        command: ["/bin/bash"]
+        args: ["-c", "while :;do sleep 100000;done"]
+        imagePullPolicy: IfNotPresent

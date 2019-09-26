@@ -1,0 +1,7 @@
+apiVersion: upload.cdi.kubevirt.io/v1alpha1
+kind: UploadTokenRequest
+metadata:
+  name: cirros-vm-disk-upload-token
+  namespace: default
+spec:
+  pvcName: cirros-vm-disk

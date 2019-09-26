@@ -1,0 +1,26 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachineInstance
+metadata:
+  name: cirros-vm
+  labels:
+    name: cirros-vm
+spec:
+  domain:
+    devices:
+      disks:
+      - disk:
+          bus: virtio
+        name: pvcdisk
+    machine:
+      type: ""
+    resources:
+      requests:
+        memory: 64M
+  terminationGracePeriodSeconds: 0
+  volumes:
+  - name: pvcdisk
+    persistentVolumeClaim:
+      claimName: cirros-vm-disk
+status: {}
+...
