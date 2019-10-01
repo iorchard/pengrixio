@@ -1,0 +1,46 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  name: jijisa-win10
+  labels:
+    name: jijisa-win10
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        name: jijisa-win10
+        kubevirt.io/os: win10
+    spec:
+      domain:
+        clock:
+          timer:
+            hpet:
+              present: false
+        features:
+          acpi: {}
+          apic: {}
+        machine:
+          type: ""
+        cpu:
+          cores: 4
+        resources:
+          requests:
+            memory: 4Gi
+        devices:
+          disks:
+          - name: jijisa-win10
+            disk: {}
+          interfaces:
+          - name: default
+            bridge: {}
+      terminationGracePeriodSeconds: 0
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+      - name: jijisa-win10
+        dataVolume:
+          name: jijisa-win10
+...

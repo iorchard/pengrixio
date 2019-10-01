@@ -1,0 +1,17 @@
+apiVersion: cdi.kubevirt.io/v1alpha1
+kind: DataVolume
+metadata:
+  name: jijisa-win10
+spec:
+  source:
+    pvc:
+      namespace: default
+      name: win10-golden-disk
+  pvc:
+    accessModes:
+      - ReadWriteOnce
+    volumeMode: Filesystem
+    resources:
+      requests:
+        storage: 20Gi
+    storageClassName: pengrixio

@@ -1,0 +1,18 @@
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachineInstancePreset
+version: v1alpha3
+metadata:
+  name: win10-preset
+spec:
+  selector:
+    matchLabels:
+      kubevirt.io/os: win10
+  domain:
+    features:
+      acpi: {}
+      apic: {}
+    cpu:
+      cores: 4
+    resources:
+      requests:
+        memory: 4Gi

@@ -1,0 +1,60 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  name: win10-golden-vm
+  labels:
+    name: win10-golden-vm
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        name: win10-golden-vm
+        kubevirt.io/os: win10
+    spec:
+      domain:
+        clock:
+          timer:
+            hpet:
+              present: false
+        features:
+          acpi: {}
+          apic: {}
+        machine:
+          type: ""
+        cpu:
+          cores: 4
+        resources:
+          requests:
+            memory: 4Gi
+        devices:
+          disks:
+          - name: win10-golden-disk
+            bootOrder: 1
+            disk: {}
+          - name: win10-iso
+            bootOrder: 2
+            cdrom:
+              bus: sata
+          - name: virtiocontainerdisk
+            cdrom:
+              bus: sata
+          interfaces:
+          - name: default
+            bridge: {}
+      terminationGracePeriodSeconds: 0
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+      - name: win10-golden-disk
+        persistentVolumeClaim:
+          claimName: win10-golden-disk
+      - name: win10-iso
+        persistentVolumeClaim:
+          claimName: win10-iso
+      - name: virtiocontainerdisk
+        containerDisk:
+          image: kubevirt/virtio-container-disk
+...
