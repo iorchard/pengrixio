@@ -17,10 +17,23 @@ spec:
         clock:
           timer:
             hpet:
-              present: false
+              present: true
+            hyperv:
+              present: true
+            pit:
+              tickPolicy: discard
+            rtc:
+              tickPolicy: catchup
+          timezone: "Asia/Seoul"
+          utc: {}
         features:
           acpi: {}
           apic: {}
+          hyperv:
+            relaxed: {}
+            vapic: {}
+            synic: {}
+            synictimer: {}
         machine:
           type: ""
         cpu:
@@ -35,12 +48,12 @@ spec:
           interfaces:
           - name: default
             bridge: {}
-      terminationGracePeriodSeconds: 0
+      terminationGracePeriodSeconds: 30
       networks:
       - name: default
         pod: {}
       volumes:
       - name: jijisa-win10
-        dataVolume:
-          name: jijisa-win10
+        persistentVolumeClaim:
+          claimName: jijisa-win10
 ...

@@ -17,7 +17,9 @@ spec:
         clock:
           timer:
             hpet:
-              present: false
+              present: true
+            hyperv:
+              present: true
         features:
           acpi: {}
           apic: {}
@@ -43,7 +45,7 @@ spec:
           interfaces:
           - name: default
             bridge: {}
-      terminationGracePeriodSeconds: 0
+      terminationGracePeriodSeconds: 30
       networks:
       - name: default
         pod: {}
