@@ -1,0 +1,72 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  name: jijisa-win10
+  labels:
+    name: jijisa-win10
+spec:
+  running: false
+  template:
+    metadata:
+      labels:
+        name: jijisa-win10
+        kubevirt.io/os: win10
+    spec:
+      domain:
+        clock:
+          timer:
+            hpet:
+              present: true
+            hyperv:
+              present: true
+            pit:
+              tickPolicy: discard
+            rtc:
+              tickPolicy: catchup
+          timezone: "Asia/Seoul"
+          utc: {}
+        features:
+          acpi: {}
+          apic: {}
+          hyperv:
+            relaxed: {}
+            vapic: {}
+            synic: {}
+            synictimer: {}
+        machine:
+          type: ""
+        cpu:
+          cores: 4
+        resources:
+          requests:
+            memory: 4Gi
+        devices:
+          disks:
+          - name: jijisa-win10-disk
+            disk: {}
+          interfaces:
+          - name: default
+            bridge: {}
+      terminationGracePeriodSeconds: 30
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+      - dataVolume:
+          name: jijisa-win10
+        name: jijisa-win10-disk
+  dataVolumeTemplates:
+  - metadata:
+      name: jijisa-win10
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+      source:
+        pvc:
+          name: win10-golden-disk
+          namespace: default
