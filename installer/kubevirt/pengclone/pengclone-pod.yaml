@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jijisa-win10
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: pengrixio
+...
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debian
+  namespace: default
+spec:
+  containers:
+    - name: pengclone
+      image: pengclone:latest
+      imagePullPolicy: IfNotPresent
+      command:
+        - /entrypoint.sh
+        - "http://192.168.24.10:31597/pengrixio/win10-golden-disk.qcow2"
+      volumeMounts:
+        - mountPath: "/mnt"
+          name: jijisa-win10
+  volumes:
+    - name: jijisa-win10
+      persistentVolumeClaim:
+        claimName: jijisa-win10
+...
