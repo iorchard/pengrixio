@@ -5,7 +5,6 @@ metadata:
   namespace: rook-ceph
 spec:
   cephVersion:
-    # For the latest ceph images, see https://hub.docker.com/r/ceph/ceph/tags
     image: ceph/ceph:v14.2
     allowUnsupported: false
   dataDirHostPath: /var/lib/rook
@@ -22,5 +21,8 @@ spec:
         config:
           storeType: bluestore
       - name: sdc
+        config:
+          storeType: bluestore
+      - name: sdd
         config:
           storeType: bluestore

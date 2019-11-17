@@ -43,7 +43,7 @@ spec:
             memory: 4Gi
         devices:
           disks:
-          - name: jijisa-win10
+          - name: jijisa-win10-disk
             disk: {}
           interfaces:
           - name: default
@@ -53,7 +53,20 @@ spec:
       - name: default
         pod: {}
       volumes:
-      - name: jijisa-win10
-        persistentVolumeClaim:
-          claimName: jijisa-win10
-...
+      - dataVolume:
+          name: jijisa-win10
+        name: jijisa-win10-disk
+  dataVolumeTemplates:
+  - metadata:
+      name: jijisa-win10
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+      source:
+        pvc:
+          name: win10-golden-disk
+          namespace: default

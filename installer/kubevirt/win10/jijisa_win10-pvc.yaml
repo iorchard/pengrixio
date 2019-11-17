@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: win10-disk
+  name: jijisa-win10
 spec:
   accessModes:
     - ReadWriteOnce
   volumeMode: Filesystem
   resources:
     requests:
-      storage: 10Gi
+      storage: 20Gi
   storageClassName: pengrixio
