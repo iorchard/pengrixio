@@ -1,0 +1,72 @@
+---
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  name: {{ d['name'] }}
+  labels:
+    name: {{ d['name'] }}
+spec:
+  running: true
+  template:
+    metadata:
+      labels:
+        name: {{ d['name'] }}
+    spec:
+      domain:
+        clock:
+          timer:
+            hpet:
+              present: true
+            hyperv:
+              present: true
+            pit:
+              tickPolicy: discard
+            rtc:
+              tickPolicy: catchup
+          timezone: "Asia/Seoul"
+          utc: {}
+        features:
+          acpi: {}
+          apic: {}
+          hyperv:
+            relaxed: {}
+            vapic: {}
+            synic: {}
+            synictimer: {}
+        machine:
+          type: ""
+        cpu:
+          cores: {{ d['cpu_spec'] }}
+        resources:
+          requests:
+            memory: {{ d['mem_spec'] }}Gi
+        devices:
+          disks:
+          - name: {{ d['name'] }}-disk
+            disk: {}
+            bootOrder: 1
+          interfaces:
+          - name: default
+            bridge: {}
+      terminationGracePeriodSeconds: 0
+      networks:
+      - name: default
+        pod: {}
+      volumes:
+      - dataVolume:
+          name: {{ d['name'] }}
+        name: {{ d['name'] }}-disk
+  dataVolumeTemplates:
+  - metadata:
+      name: {{ d['name'] }}
+    spec:
+      pvc:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ d['disk_spec'] }}Gi
+      source:
+        http:
+          url: {{ d['image_url'] }}
+...

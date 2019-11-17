@@ -1,0 +1,286 @@
+<template>
+  <q-page padding>
+
+    <div class="column">
+      <form>
+        <div class="stacked-label">
+          <label>ID</label>
+          <input
+            type="text"
+            v-model="form.name"
+            ref="name"
+            class="full-width"
+            :class="{'has-error': $v.form.name.$error}"
+            placeholder="Enter User ID."
+          >
+          <span
+            class="text-negative"
+            v-if="!$v.form.name.required">
+            User ID is required.
+          </span>
+          <span
+            class="text-negative"
+            v-if="!$v.form.name.minLength">
+            User ID should be at least 3 letters.
+          </span>
+          <span
+            class="text-negative"
+            v-if="!$v.form.name.alphaNum">
+            User ID should be alphanumeric.
+          </span>
+        </div>
+        <p></p>
+        <div class="stacked-label">
+          <label>Password</label>
+          <input
+            type="password"
+            size="50"
+            v-model="form.pass"
+            ref="pass"
+            placeholder="Enter Password."
+            :class="{'has-error': $v.form.pass.$error}"
+          >
+        </div>
+        <span
+          class="text-negative"
+          v-if="!$v.form.pass.required"
+        > 비밀번호는 필수 입력 항목입니다.
+        </span>
+        <span
+          class="text-negative"
+          v-if="!$v.form.pass.minLength"
+        > 비밀번호는 8자 이상이어야 합니다.
+        </span>
+        <p></p>
+        <div class="stacked-label">
+          <label>비밀번호 재입력</label>
+          <input
+            type="password"
+            size="50"
+            v-model="form.pass2"
+            ref="pass2"
+            class="full-width"
+            placeholder="비밀번호를 재입력하세요."
+          >
+        </div>
+        <span
+          class="text-negative"
+          v-if="!$v.form.pass2.sameAsPassword"
+        > 비밀번호가 일치하지 않습니다.
+        </span>
+        <p></p>
+        <div class="stacked-label">
+          <label>성함</label>
+          <input
+            type="text"
+            size="50"
+            v-model="form.cn"
+            ref="cn"
+            class="full-width"
+            placeholder="성함을 입력하세요."
+          >
+        </div>
+        <p></p>
+        <div class="stacked-label">
+          <label>역할</label>
+          <p></p>
+          <q-select
+            type="radio"
+            v-model="form.role"
+            :options="form.roleOptions"
+          >
+          </q-select>
+        </div>
+        <p></p>
+        <div class="stacked-label">
+          <label>상태</label>
+          <p></p>
+          <q-select
+            type="radio"
+            v-model="form.state"
+            :options="form.stateOptions"
+          >
+          </q-select>
+        </div>
+        <p></p>
+        <div class="stacked-label">
+          <label>Tenant</label>
+          <p></p>
+          <q-select
+            type="checkbox"
+            v-model="form.tenant"
+            :options="form.tenantsOptions"
+          >
+          </q-select>
+        </div>
+        <p></p>
+        <div class="stacked-label">
+          <q-input filled v-model="form.expireAt">
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy ref="qDateProxy" transition-show="scale"
+                  transition-hide="scale">
+                  <q-date v-model="form.expireAt"
+                    @input="() => $refs.qDateProxy.hide()" />
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+          <label>만료일 (기본 90일 후)</label>
+        </div>
+        <p></p>
+        <div class="stacked-label">
+          <input
+            type="text"
+            size="50"
+            v-model="form.desc"
+            ref="desc"
+            class="full-width"
+            placeholder="사용자 설명을 입력하세요."
+          >
+          <label>설명</label>
+        </div>
+        <p></p>
+        <div>
+          <button class="purple" @click="submit">
+            생성
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </q-page>
+</template>
+
+<script>
+import { API_URL, checkStrength } from '../../config'
+import { sameAs, required, minLength, alphaNum } from 'vuelidate/lib/validators'
+import moment from 'moment'
+
+export default {
+  name: 'accountCreate',
+  data () {
+    return {
+      min: moment(new Date().toISOString()).format(),
+      form: {
+        name: '',
+        pass: '',
+        pass2: '',
+        cn: '',
+        role: 'user',
+        roleOptions: [
+          { label: 'admin', value: 'admin' },
+          { label: 'user', value: 'user' }
+        ],
+        state: 'Enabled',
+        stateOptions: [
+          { label: 'Enabled', value: 'Enabled' },
+          { label: 'Disabled', value: 'Disabled' },
+          { label: 'Locked', value: 'Locked' }
+        ],
+        tenants: [],
+        tenantsOptions: [],
+        expireAt: moment(new Date().toISOString()).add(90, 'days').format(),
+        desc: ''
+      }
+    }
+  },
+  validations: {
+    form: {
+      name: {
+        required,
+        alphaNum,
+        minLength: minLength(3)
+      },
+      pass: {
+        required,
+        minLength: minLength(8)
+      },
+      pass2: {
+        sameAsPassword: sameAs('pass')
+      },
+      cn: {
+        required
+      },
+      expireAt: {
+        required
+      }
+    }
+  },
+  methods: {
+    submit: function () {
+      if (!this.form.name) {
+        this.$q.notify('Please enter User ID.')
+        return
+      }
+      if (checkStrength(this.form.pass) < 3) {
+        this.$q.notify('Please comply with password policy')
+        return
+      }
+      if (this.form.pass !== this.form.pass2) {
+        this.$q.notify('Passwords are not matched.')
+        return
+      }
+      if (!this.form.cn) {
+        this.$q.notify('Name is the necessary field.')
+        return
+      }
+      if (!this.form.state) {
+        this.$q.notify('State is the necessary field.')
+        return
+      }
+      if (!this.form.expireAt) {
+        this.$q.notify('Expire Date is the necessary field.')
+        return
+      }
+      const payload = {
+        name: this.form.name,
+        pass: this.form.pass,
+        cn: this.form.cn,
+        role: this.form.role,
+        state: this.form.state,
+        tenant: this.form.tenant,
+        expireAt: this.form.expireAt,
+        desc: this.form.desc
+      }
+      const url = API_URL + '/account/'
+      this.$axios.post(url, payload)
+        .then((response) => {
+          this.$router.push('/account/')
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: 'negative',
+            position: 'bottom',
+            message: 'Creating an account is failed.',
+            icon: 'report_problem'
+          })
+        })
+    },
+    getTenants: function () {
+      const url = API_URL + '/tenant/'
+      this.$axios.get(url)
+        .then((response) => {
+          console.log(response.data)
+          for (let i in response.data) {
+            let r = response.data[i]
+            this.form.tenantsOptions.push(r.name)
+          }
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: 'negative',
+            position: 'bottom',
+            message: 'Getting tenant list is failed.',
+            icon: 'report_problem'
+          })
+        })
+    }
+  },
+  mounted: function () {
+    if (!this.$store.state.pengrixio.login) { this.$router.push('/') }
+
+    this.getTenants()
+  }
+}
+</script>

@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ d['name'] }}
+spec:
+  selector:
+    name: {{ d['name'] }}
+  ports:
+  - name: rdp
+    port: 3389
+    protocol: TCP
+  type: NodePort
+...

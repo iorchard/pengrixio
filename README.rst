@@ -30,3 +30,42 @@ https://medium.com/@ryangordon210/building-python-microservices-part-i-getting-s
 https://medium.com/adobetech/three-principles-of-api-first-design-fa6666d9f694
 
 https://owncloud.org/news/running-owncloud-in-kubernetes-with-rook-ceph-storage/
+
+
+vuelidate and quasar
+---------------------
+
+npm install vuelidate --save
+
+quasar new boot vuelidate
+
+vi boot/vuelidate.js
+...
+import Vuelidate from 'vuelidate'
+
+export default ({ Vue }) => {
+  Vue.use(Vuelidate)
+}
+
+vi quasar.conf.js
+...
+    boot: [
+      'i18n',
+      'axios',
+      'vuelidate'
+    ],
+
+
+moment and quasar
+------------------
+
+npm install moment --save
+
+quasar new boot moment
+
+Apex Chart with quasar
+------------------------
+
+https://github.com/patrickmonteiro/quasar-apexcharts
+
+

@@ -1,0 +1,38 @@
+import os
+from datetime import timedelta
+
+# ADMIN_PW (bcrypt hashed pw)
+# bcrypt.gensalt()
+# bcrypt.hashpw("plaintext_password", "gensalt_output")
+ADMIN_ID = 'admin'
+ADMIN_SALT = '$2b$12$SwJl6pf3hD8AguwVx6DPH.'
+ADMIN_PW = '$2b$12$SwJl6pf3hD8AguwVx6DPH.ykokHMo9onA/i3sDA4sTHT5ywDPu8OK'
+
+# JWT secret key
+# Create random key: binascii.hexlify(os.urandom(24)).decode()
+JWT_SECRET_KEY = '8038b9995e95863e8e8b57b914ed42c1ba9081f148849d46'
+#JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=60)
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
+#JWT_ACCESS_TOKEN_EXPIRES is 15 minutes default.
+#JWT_REFRESH_TOKEN_EXPIRES is 1 month default.
+
+# Terminal
+KUBIC_USER = 'jijisa'
+KUBICSHELL = 'kubicshell'
+TERM_PORT_BEGIN = 40000
+TERM_PORT_END = 40100
+MY_IP = '192.168.24.5'
+
+#
+## Do Not Edit Below!!!
+#
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(APP_ROOT)
+
+# KUBE
+KUBECONFIG = PROJECT_ROOT + '/.kubeconfig'
+KUBECTL = '/usr/local/bin/kubectl'
+KUBEMANIFEST = APP_ROOT + '/manifests'
+
+# Catalog File management
+SHELLINABOXD = '/usr/local/bin/shellinaboxd'

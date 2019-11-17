@@ -1,0 +1,19 @@
+export const API_URL = 'http://192.168.24.5:5000/api'
+export const POLLING_INTERVAL = 20 * 1000
+export const REFRESH_INTERVAL = 25 * 60 * 1000
+export function checkStrength (pw) {
+  // initialize
+  var iStrength = 0
+
+  // check length
+  if (pw.length < 8) {
+    return iStrength
+  }
+  if (pw.length > 7) iStrength += 1
+  if (pw.length > 9) iStrength += 1
+
+  if (pw.match(/[a-zA-Z]/) && pw.match(/[0-9]/)) iStrength += 1
+  if (pw.match(/\W/)) iStrength += 1
+
+  return iStrength
+}
