@@ -1,0 +1,25 @@
+expose:
+  type: loadBalancer
+  tls:
+    enabled: false
+  loadBalancer:
+    name: harbor
+    IP: "10.24.1.101"
+    ports:
+      httpPort: 80
+
+      externalURL: http://harden.iorchard.co.kr:31358
+
+persistence:
+  persistentVolumeClaim:
+    registry:
+      storageClass: "pengrixio"
+    chartmuseum:
+      storageClass: "pengrixio"
+    jobservice:
+      storageClass: "pengrixio"
+    database:
+      storageClass: "pengrixio"
+    redis:
+      storageClass: "pengrixio"
+
