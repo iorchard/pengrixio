@@ -1,0 +1,13 @@
+<configs>
+  {% for d in l_app %}
+  <config name="{{ d['name'] }}" protocol="rdp">
+    <param name="hostname" value="{{ d['hostname'] }}" />
+    <param name="port" value="{{ d['port'] }}" />
+    <param name="security" value="nla" />
+    <param name="username" value="{{ d['username'] }}" />
+    <param name="password" value="{{ d['password'] }}" />
+    <param name="ignore-cert" value="true" />
+    <param name="server-layout" value="ko-kr-qwerty" />
+  </config>
+  {% endfor %}
+</configs>
