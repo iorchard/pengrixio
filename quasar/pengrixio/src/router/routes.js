@@ -8,12 +8,26 @@ const routes = [
     ]
   },
   {
+    path: '/dashboard/',
+    component: () => import('layouts/Main.vue'),
+    children: [
+      { path: '', component: () => import('pages/Dashboard.vue') }
+    ]
+  },
+  {
+    path: '/user/',
+    component: () => import('layouts/UserMain.vue'),
+    children: [
+      { path: '', component: () => import('pages/user/AppList.vue') }
+    ]
+  },
+  {
     path: '/app/',
     component: () => import('layouts/Main.vue'),
     children: [
       { path: '', component: () => import('pages/app/List.vue') },
       { path: 'create/:user/', component: () => import('pages/app/Create.vue') },
-      { path: 'connect/', component: () => import('pages/app/Connect.vue') }
+      { path: 'connect/:name/', component: () => import('pages/app/Connect.vue') }
     ]
   },
   {
@@ -21,7 +35,8 @@ const routes = [
     component: () => import('layouts/Main.vue'),
     children: [
       { path: '', component: () => import('pages/catalog/List.vue') },
-      { path: 'create/', component: () => import('pages/catalog/Create.vue') }
+      { path: 'create/', component: () => import('pages/catalog/Create.vue') },
+      { path: ':name/edit/', component: () => import('pages/catalog/Edit.vue') }
     ]
   },
   {
@@ -38,7 +53,8 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/edge/List.vue') },
       { path: 'create/', component: () => import('pages/edge/Create.vue') },
-      { path: ':name/', component: () => import('pages/edge/Show.vue') }
+      { path: ':name/', component: () => import('pages/edge/Show.vue') },
+      { path: ':name/edit/', component: () => import('pages/edge/Edit.vue') }
     ]
   },
   {
@@ -60,6 +76,7 @@ const routes = [
     path: '/login/',
     component: () => import('layouts/Index.vue'),
     children: [
+      { path: '', component: () => import('pages/Login.vue') },
       { path: 'admin/', component: () => import('pages/LoginAdmin.vue') }
     ]
   },
@@ -67,6 +84,7 @@ const routes = [
     path: '/logout/',
     component: () => import('layouts/Index.vue'),
     children: [
+      { path: '', component: () => import('pages/Logout.vue') },
       { path: 'admin/', component: () => import('pages/LogoutAdmin.vue') }
     ]
   },

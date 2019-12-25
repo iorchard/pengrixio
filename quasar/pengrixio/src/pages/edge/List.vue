@@ -1,128 +1,99 @@
 <template>
   <q-page padding>
+    <div>
+      <q-btn color="primary" icon="add"
+        rounded
+        @click="goToCreate"
+        label="Add"
+      >
+        <q-tooltip
+          content-class="bg-purple" content-style="font-size: 16px"
+        >Create an edge.</q-tooltip>
+      </q-btn>
+    </div>
     <div class="q-pa-sm">
 
-      <q-splitter
-        v-model="splitterModel"
+      <q-table
+        title="Edges"
+        :data="data"
+        :columns="columns"
+        row-key="name"
+        :filter="filter"
+        :pagination.sync="pagination"
       >
 
-        <template v-slot:before>
-          <div class="q-pa-sm">
-            <div class="text-h5 q-mb-sm">
-              <q-icon name="cloud" size="xl" style="color:#ccc" />
-              Core Cloud
-            </div>
-            <div class="text-subtitle2">서초 KIDC</div>
-            <div>
-              <q-list bordered dense>
-                <q-item>
-                  <q-item-section>Status</q-item-section>
-                  <q-badge :color="statusColor">Healthy</q-badge>
-                </q-item>
-                <q-item>
-                  <q-item-section>Storage</q-item-section>
-                  <q-item-section style="color:#0000ff">
-                    {{ data[0].used_stor }} /
-                    {{ data[0].tot_stor }} GiB ({{ data[0].storage }} %)
-                  </q-item-section>
-                </q-item>
-                <q-item>
-                  <q-item-section>Edges</q-item-section>
-                  <q-item-section style="color:#0000ff">
-                    2
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </div>
-          </div>
+        <template v-slot:top-right>
+          <q-input dense debounce="300" v-model="filter"
+            place-holder="Search">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
         </template>
 
-        <template v-slot:after>
-
-          <div class="q-pa-sm">
-            <div class="text-h6 q-mb-md">
-              <q-icon name="device_hub" size="lg" style="color:#ccc" />
-              Edge Platform
-            </div>
-          </div>
-          <q-bar dark>
+        <template v-slot:body-cell-functions="props">
+          <q-td :props="props">
             <div>
-              <q-btn color="primary" icon="add" size="md" rounded dense
-                @click="goToCreate" label="New"
-              />
-              <q-tooltip>Register an edge</q-tooltip>
+              <q-btn color="primary" icon="info"
+                size="sm" round dense
+                @click="getEdgeInfo(props.row.name); edgeInfo = true"
+              >
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >View an edge</q-tooltip>
+              </q-btn>
+              <q-btn color="primary" icon="edit"
+                size="sm" round dense
+                @click="goToEdit(props.row.name)"
+              >
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >Update an edge.</q-tooltip>
+              </q-btn>
+              <q-btn color="primary" icon="delete"
+                size="sm" round dense
+                @click="getEdgeInfo(props.row.name); confirmDelete = true"
+              >
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >Delete an edge.</q-tooltip>
+              </q-btn>
             </div>
-          </q-bar>
-          <div v-for="e in data" :key="e.name" class="row">
-            <q-card class="edge-card">
-              <q-card-section>
-                <div class="text-h6">{{ e.name ? e.name : '' }}</div>
-                <div class="text-subtitle2">{{ e.desc ? e.desc : '' }}</div>
-              </q-card-section>
-              <q-separator />
-              <q-card-section>
-                <div class="row">
-                  <div style="width:200px">
-                    <apexchart type="radialBar"
-                      :options="cpuOptions"
-                      :series="[e.cpu]" />
-                  </div>
-                  <div style="width:200px">
-                    <apexchart type="radialBar"
-                      :options="memoryOptions"
-                      :series="[e.memory]" />
-                  </div>
-                  <div style="width:200px">
-                    <apexchart type="radialBar"
-                      :options="storageOptions"
-                      :series="[e.storage]" />
-                  </div>
-                  <div style="width:300px">
-
-                    <q-list dense>
-                      <q-item>
-                        <q-item-section>Status</q-item-section>
-                        <q-item-section style="color:#0000ff">
-                          <q-badge :color="statusColor">{{ e.status }}</q-badge>
-                        </q-item-section>
-                      </q-item>
-                      <q-item>
-                        <q-item-section>CPU</q-item-section>
-                        <q-item-section style="color:#0000ff">
-                          {{ e.tot_cpu }} cores
-                        </q-item-section>
-                      </q-item>
-                      <q-item>
-                        <q-item-section>Memory</q-item-section>
-                        <q-item-section style="color:#0000ff">
-                          {{ e.tot_mem }} GiB
-                        </q-item-section>
-                      </q-item>
-                      <q-item>
-                        <q-item-section>Storage</q-item-section>
-                        <q-item-section style="color:#0000ff">
-                          {{ e.used_stor }}/{{ e.tot_stor }} GiB
-                        </q-item-section>
-                      </q-item>
-                      <q-item>
-                        <q-item-section>Hosts/Tenants/Apps</q-item-section>
-                        <q-item-section style="color:#0000ff">
-                          {{ e.hosts }}/{{ e.tenants }}/{{ e.apps }}
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </div>
-                </div>
-              </q-card-section>
-              <q-separator />
-              <q-card-actions>
-                <q-btn icon="info" @click="goToEdge(e.name)" />
-                <q-btn icon="delete" />
-              </q-card-actions>
-            </q-card>
-          </div>
+          </q-td>
         </template>
-      </q-splitter>
+
+      </q-table>
+
+      <q-dialog v-model="edgeInfo">
+        <q-card>
+          <q-card-section class="row items-center">
+            <div class="text-h6">Edge Info</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+
+          <q-card-section>
+            name: {{ edge.name }}
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+
+      <q-dialog v-model="confirmDelete">
+        <q-card>
+          <q-card-section class="row items-center">
+            <q-avatar icon="delete" color="primary" text-color="white" />
+            <span class="q-ml-sm">Are you sure to delete an edge?</span>
+          </q-card-section>
+
+          <q-card-section>
+            <q-btn flat label="Cancel" color="primary" v-close-popup />
+            <q-btn flat label="OK" color="primary" v-close-popup
+              @click="processDelete(edge.name)"
+            />
+          </q-card-section>
+        </q-card>
+      </q-dialog>
+
     </div>
   </q-page>
 </template>
@@ -133,64 +104,36 @@ export default {
   name: 'EdgeList',
   data () {
     return {
-      splitterModel: 20,
       edge: {},
-      core: 0,
-      data: [
-        { name: '',
-          desc: '',
-          cpu: 0,
-          memory: 0,
-          storage: 0,
-          status: '',
-          tot_cpu: 0,
-          tot_mem: 0,
-          used_stor: 0,
-          tot_str: 0,
-          hosts: 0
-        }
-      ],
-      statusColor: 'green',
-      cpu: [],
-      cpuOptions: {
-        chart: {
-          toolbar: { show: false }
-        },
-        stroke: {
-          lineCap: 'round'
-        },
-        labels: ['CPU']
+      confirmDelete: false,
+      edgeInfo: false,
+      filter: '',
+      data: [],
+      pagination: {
+        sortBy: 'name',
+        descending: false,
+        rowsPerPage: 10
       },
-      memory: [],
-      memoryOptions: {
-        chart: {
-          toolbar: { show: false }
+      columns: [
+        { name: 'name', required: true, label: 'Name', field: 'name' },
+        { name: 'endpoint', label: 'Endpoint', field: 'endpoint' },
+        { name: 'broker', label: 'Broker', field: 'broker' },
+        { name: 'desc', label: 'Description', field: 'desc' },
+        { name: 'createdAt',
+          label: 'Created',
+          field: 'createdAt',
+          format: (val) => { return val ? new Date(val).toLocaleString() : '' }
         },
-        stroke: {
-          lineCap: 'round'
+        { name: 'modifiedAt',
+          label: 'Modified',
+          field: 'modifiedAt',
+          format: (val) => { return val ? new Date(val).toLocaleString() : '' }
         },
-        labels: ['Memory']
-      },
-      storage: [],
-      storageOptions: {
-        chart: {
-          toolbar: { show: false }
-        },
-        stroke: {
-          lineCap: 'round'
-        },
-        labels: ['Storage']
-      }
+        { name: 'functions', label: 'Functions', field: 'functions' }
+      ]
     }
   },
   methods: {
-    showLoading () {
-      this.$q.loading.show()
-      this.timer = setTimeout(() => {
-        this.$q.loading.hide()
-        this.timer = void 0
-      }, 5000)
-    },
     processDelete: function (name) {
       const url = API_URL + `/edge/${name}/`
       this.$axios.delete(url)
@@ -218,6 +161,9 @@ export default {
     goToEdge: function (name) {
       this.$router.push(`/edge/${name}/`)
     },
+    goToEdit: function (name) {
+      this.$router.push(`/edge/${name}/edit/`)
+    },
     getEdgeInfo: function (name) {
       const url = API_URL + `/edge/${name}/`
       this.$axios.get(url)
@@ -233,7 +179,7 @@ export default {
           })
         })
     },
-    listEdges: function () {
+    getEdges: function () {
       const url = API_URL + '/edge/'
       this.$axios.get(url)
         .then((response) => {
@@ -251,9 +197,8 @@ export default {
   },
   mounted: function () {
     if (!this.$store.state.pengrixio.login) { this.$router.push('/') }
-    this.showLoading()
-    this.listEdges()
-    this.intervalObj = setInterval(this.listEdges, POLLING_INTERVAL)
+    this.getEdges()
+    this.intervalObj = setInterval(this.getEdges, POLLING_INTERVAL)
   },
   destroyed: function () {
     clearInterval(this.intervalObj)

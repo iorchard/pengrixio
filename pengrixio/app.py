@@ -15,6 +15,7 @@ from pengrixio.api.edge.endpoints.route import ns as edge_ns
 from pengrixio.api.tenant.endpoints.route import ns as tenant_ns
 from pengrixio.api.catalog.endpoints.route import ns as catalog_ns
 from pengrixio.api.app.endpoints.route import ns as app_ns
+from pengrixio.api.dashboard.endpoints.route import ns as dashboard_ns
 
 from pengrixio.api.restplus import api
 
@@ -68,6 +69,7 @@ def initialize_app(flask_app):
     api.add_namespace(tenant_ns)
     api.add_namespace(catalog_ns)
     api.add_namespace(app_ns)
+    api.add_namespace(dashboard_ns)
 
     flask_app.register_blueprint(blueprint)
 

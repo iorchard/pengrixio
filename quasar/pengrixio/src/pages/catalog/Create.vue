@@ -5,6 +5,9 @@
 
         <div class="q-gutter-md" style="max-width: 300px">
           <q-input v-model="form.name" label="Name" />
+          <q-select v-model="form.type" :options="form.typeOptions"
+            hint="Type" />
+          <q-input v-model="form.logo" label="Logo image name" />
           <q-badge color="secondary">CPU (ea)</q-badge>
           <q-slider v-model="form.cpu_spec" label label-always
            :min="1" :max="16" :step="1"
@@ -40,6 +43,9 @@ export default {
       data: [],
       form: {
         name: '',
+        logo: '',
+        type: 'vm',
+        typeOptions: ['vm', 'container'],
         cpu_spec: 1,
         mem_spec: 1,
         disk_spec: 10,
@@ -56,6 +62,8 @@ export default {
       }
       const payload = {
         name: this.form.name,
+        logo: this.form.logo,
+        type: this.form.type,
         cpu_spec: this.form.cpu_spec,
         mem_spec: this.form.mem_spec,
         disk_spec: this.form.disk_spec,

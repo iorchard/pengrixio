@@ -27,19 +27,25 @@
                 size="sm" round dense
                 @click="getAppInfo(props.row.name); appInfo = true"
               >
-                <q-tooltip>View an app.</q-tooltip>
-              </q-btn>
-              <q-btn color="primary" icon="delete"
-                size="sm" round dense
-                @click="getAppInfo(props.row.name); confirmDelete = true"
-              >
-                <q-tooltip>Delete an app.</q-tooltip>
-              </q-btn>
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >View an app.</q-tooltip>
+              </q-btn>&nbsp;
               <q-btn color="primary" icon="computer"
                 size="sm" round dense
                 @click="goToConnect(props.row.name)"
               >
-                <q-tooltip>Connect to an app.</q-tooltip>
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >Connect to an app.</q-tooltip>
+              </q-btn>&nbsp;
+              <q-btn color="red" icon="delete"
+                size="sm" round dense
+                @click="getAppInfo(props.row.name); confirmDelete = true"
+              >
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >Delete an app.</q-tooltip>
               </q-btn>
             </div>
           </q-td>
@@ -81,11 +87,13 @@
 </template>
 
 <script>
-import { API_URL } from '../../config'
+import { API_URL, POLLING_INTERVAL } from '../../config'
+// import { AppFullscreen } from 'quasar'
 export default {
   name: 'AppList',
   data () {
     return {
+      broker: '',
       data: [],
       app: {},
       appInfo: false,
@@ -97,11 +105,11 @@ export default {
         rowsPerPage: 10
       },
       columns: [
-        { name: 'name', required: true, label: 'Name', field: 'name' },
-        { name: 'catalog', label: 'Catalog', field: 'catalog' },
-        { name: 'tenant', label: 'Tenant', field: 'tenant' },
-        { name: 'user', label: 'User', field: 'user' },
-        { name: 'description', label: 'Description', field: 'desc' },
+        { name: 'name', sortable: true, required: true, label: 'Name', field: 'name' },
+        { name: 'catalog', sortable: true, label: 'Catalog', field: 'catalog' },
+        { name: 'tenant', sortable: true, label: 'Tenant', field: 'tenant' },
+        { name: 'user', sortable: true, label: 'User', field: 'user' },
+        { name: 'status', sortable: true, label: 'Status', field: 'status' },
         { name: 'createdAt',
           label: 'Created',
           field: 'createdAt',
@@ -113,7 +121,23 @@ export default {
   },
   methods: {
     goToConnect: function (name) {
-      window.open('http://192.168.24.6/guacamole/')
+      // this.$router.push(`/app/connect/${name}/`)
+      const url = API_URL + '/app/' + name + '/connect/'
+      this.$axios.get(url)
+        .then((response) => {
+          this.broker = response.data
+          // AppFullscreen.request()
+          // let id = btoa(unescape(encodeURIComponent(name + 'noauth')))
+          window.open('http://' + this.broker + '/guacamole/#/client/' + name, name, 'height=' + screen.height + ',width=' + screen.width + ',fullcreen=yes')
+        })
+        .catch(() => {
+          this.$q.notify({
+            color: 'negative',
+            position: 'bottom',
+            message: 'Getting app info failed.',
+            icon: 'report_problem'
+          })
+        })
     },
     processDelete: function (name) {
       const url = API_URL + `/app/${name}/`
@@ -170,6 +194,10 @@ export default {
   mounted: function () {
     if (!this.$store.state.pengrixio.login) { this.$router.push('/') }
     this.listApps()
+    this.intervalObj = setInterval(this.listApps, POLLING_INTERVAL)
+  },
+  destroyed: function () {
+    clearInterval(this.intervalObj)
   }
 }
 </script>

@@ -6,7 +6,9 @@
           <q-btn color="primary" icon="add" size="md" rounded dense
             @click="goToCreate" label="Add"
           />
-          <q-tooltip>Create an account</q-tooltip>
+          <q-tooltip
+            content-class="bg-purple" content-style="font-size: 16px"
+          >Create an account</q-tooltip>
         </div>
       </q-bar>
 
@@ -45,19 +47,25 @@
                 size="sm" round dense
                 @click="getUserInfo(props.row.name); userInfo = true"
               >
-                <q-tooltip>View an account</q-tooltip>
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >View an account</q-tooltip>
               </q-btn>
               <q-btn color="primary" icon="apps"
                 size="sm" round dense
                 @click="goToCreateApp(props.row.name)"
               >
-                <q-tooltip>Create an app</q-tooltip>
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >Create an app</q-tooltip>
               </q-btn>
               <q-btn color="primary" icon="delete"
                 size="sm" round dense
                 @click="getUserInfo(props.row.name); confirmDelete = true"
               >
-                <q-tooltip>Delete an account</q-tooltip>
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >Delete an account</q-tooltip>
               </q-btn>
             </div>
           </q-td>
@@ -115,12 +123,13 @@ export default {
         rowsPerPage: 10
       },
       columns: [
-        { name: 'name', required: true, label: 'User ID', field: 'name' },
-        { name: 'cn', label: 'Name', field: 'cn' },
-        { name: 'tenant', label: 'Tenant', field: 'tenant' },
+        { name: 'name', sortable: true, required: true, label: 'User ID', field: 'name' },
+        { name: 'cn', sortable: true, label: 'Name', field: 'cn' },
+        { name: 'tenant', sortable: true, label: 'Tenant', field: 'tenant' },
         { name: 'role', label: 'Role', field: 'role' },
-        { name: 'state', label: 'State', field: 'state' },
+        { name: 'state', sortable: true, label: 'State', field: 'state' },
         { name: 'expireAt',
+          sortable: true,
           label: 'Expire Date',
           field: 'expireAt',
           format: (val) => { return val ? new Date(val).toLocaleString() : '' }

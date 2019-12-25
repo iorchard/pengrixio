@@ -3,7 +3,10 @@ from pengrixio.api.restplus import api
 
 app_fields = api.model('App', {
     'name': fields.String(required=True),
+    'logo': fields.String(required=True),
+    'type': fields.String(required=True),
     'user': fields.String(required=True),
+    'status': fields.String(required=False),
     'desc': fields.String(required=False),
 })
 

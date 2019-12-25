@@ -3,9 +3,6 @@ import etcd
 import random
 import socket
 
-from pengrixio.config import TERM_PORT_BEGIN
-from pengrixio.config import TERM_PORT_END
-
 from pengrixio.database import etcdc
 
 import logging
@@ -49,24 +46,4 @@ def cmd(s_cmd, i_timeout=30, b_sudo=False):
     t_result = (b_ret, s_output)
 
     return t_result
-
-def get_port():
-    """Get available port"""
-    i_port = 0
-    b_gotit = False
-    s_address = 'localhost'
-    s = socket.socket()
-    for i in range(1, 10):
-        i_port = random.randrange(TERM_PORT_BEGIN, TERM_PORT_END)
-        try:
-            s.connect((s_address, i_port))
-        except Exception as e:
-            # port is availabe so use it.
-            b_gotit = True
-            break
-        finally:
-            s.close()
-    i_port = i_port if b_gotit else 0
-
-    return i_port
 

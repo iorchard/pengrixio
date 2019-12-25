@@ -6,6 +6,8 @@
         <div class="q-gutter-md" style="max-width: 300px">
           <q-input v-model="form.name" label="Name" />
           <q-input v-model="form.endpoint" label="Endpoint" />
+          <q-input v-model="form.broker" label="Broker" />
+          <q-input v-model="form.broker_ip" label="Broker IP" />
           <q-input v-model="form.desc" label="Description" />
         </div>
 
@@ -28,6 +30,8 @@ export default {
       form: {
         name: '',
         endpoint: '',
+        broker: '',
+        broker_ip: '',
         desc: ''
       }
     }
@@ -41,6 +45,8 @@ export default {
       const payload = {
         name: this.form.name,
         endpoint: this.form.endpoint,
+        broker: this.form.broker,
+        broker_ip: this.form.broker_ip,
         desc: this.form.desc
       }
       const url = API_URL + '/edge/'
@@ -60,8 +66,6 @@ export default {
   },
   mounted: function () {
     if (!this.$store.state.pengrixio.login) { this.$router.push('/') }
-
-    // this.getProjects()
   }
 }
 </script>

@@ -16,11 +16,9 @@ JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
 #JWT_ACCESS_TOKEN_EXPIRES is 15 minutes default.
 #JWT_REFRESH_TOKEN_EXPIRES is 1 month default.
 
-# Terminal
-KUBIC_USER = 'jijisa'
-KUBICSHELL = 'kubicshell'
-TERM_PORT_BEGIN = 40000
-TERM_PORT_END = 40100
+# GUAC Config
+GUAC_USER = 'orchard'
+GUAC_PASS = 'i0rchard'
 MY_IP = '192.168.24.5'
 
 #
@@ -33,6 +31,7 @@ PROJECT_ROOT = os.path.dirname(APP_ROOT)
 KUBECONFIG = PROJECT_ROOT + '/.kubeconfig'
 KUBECTL = '/usr/local/bin/kubectl'
 KUBEMANIFEST = APP_ROOT + '/manifests'
+BIN_DIR = PROJECT_ROOT + '/bin'
 
 # Catalog File management
 SHELLINABOXD = '/usr/local/bin/shellinaboxd'

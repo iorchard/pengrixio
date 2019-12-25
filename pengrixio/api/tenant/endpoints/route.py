@@ -13,6 +13,7 @@ from pengrixio.api.tenant.serializers import tenantSerializer
 from pengrixio.api.tenant.serializers import tenantPostSerializer
 
 from pengrixio.api.tenant.bizlogic import get_tenant
+from pengrixio.api.tenant.bizlogic import get_tenant_info
 from pengrixio.api.tenant.bizlogic import create_tenant
 from pengrixio.api.tenant.bizlogic import delete_tenant
 
@@ -20,20 +21,20 @@ log = logging.getLogger('pengrixio')
 
 ns = api.namespace('tenant', description="Operations for tenant")
 
-@ns.route('/', '/<string:edge_name>/')
+@ns.route('/', '/<string:edge>/')
 class TenantCollection(Resource):
 
     @api.marshal_list_with(tenantSerializer)
     #@jwt_required
-    def get(self, edge_name=None):
+    def get(self, edge=None):
         """Returns list of tenant."""
-        l_tenant = get_tenant(edge_name)
+        l_tenant = get_tenant(edge)
         return l_tenant
 
     @api.response(201, 'Tenant successfully created.')
     @api.expect(tenantPostSerializer)
     @jwt_required
-    def post(self, edge_name):
+    def post(self, edge):
         """Creates a new tenant.
         """
         data = request.json
@@ -47,16 +48,16 @@ class TenantCollection(Resource):
 
         return {}, 201
 
-@ns.route('/<string:name>/')
+@ns.route('/<string:edge>/<string:name>/')
 @api.response(404, 'Tenant not found.')
 class TenantItem(Resource):
 
     @api.marshal_with(tenantSerializer)
     @api.doc('get_something')
     @jwt_required
-    def get(self, name):
+    def get(self, edge, name):
         """Returns the tenant information."""
-        l_tenant = get_tenant(name)
+        l_tenant = get_tenant(edge, name)
         if not len(l_tenant):
             d_msg = {'error': 'name {} is not found.'.format(name)}
             return d_msg, 404
@@ -65,7 +66,7 @@ class TenantItem(Resource):
 
     @api.response(204, "The tenant is successfully deleted.")
     @jwt_required
-    def delete(self, name):
+    def delete(self, edge, name):
         """Deletes the tenant."""
         (b_ret, s_msg) = delete_tenant(name)
         if not b_ret:

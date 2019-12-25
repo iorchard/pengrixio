@@ -11,12 +11,14 @@ from pengrixio.api.restplus import api
 
 from pengrixio.api.catalog.serializers import catalogSerializer
 from pengrixio.api.catalog.serializers import catalogPostSerializer
+from pengrixio.api.catalog.serializers import catalogPatchSerializer
 
 from pengrixio.api.catalog.bizlogic import get_catalog
 from pengrixio.api.catalog.bizlogic import create_catalog
 from pengrixio.api.catalog.bizlogic import delete_catalog
+from pengrixio.api.catalog.bizlogic import update_catalog
 
-log = logging.getLogger('pengrixio')
+log = logging.getLogger(__name__)
 
 ns = api.namespace('catalog', description="Operations for catalog")
 
@@ -73,3 +75,14 @@ class CatalogItem(Resource):
             return d_msg, 404
 
         return None, 204
+
+    @api.response(204, "The catalog is successfully updated.")
+    @jwt_required
+    def patch(self, name):
+        """Updates the catalog."""
+        data = request.json
+        (b_ret, s_msg) = update_catalog(name, data)
+        if not b_ret:
+            d_msg = {'error': s_msg}
+            return d_msg, 404
+

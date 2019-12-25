@@ -1,5 +1,6 @@
 <template>
-  <div></div>
+  <div>
+  </div>
 </template>
 
 <script>
@@ -12,9 +13,13 @@ export default {
   methods: {
     redirect: function () {
       if (this.$store.state.pengrixio.login) {
-        this.$router.push('/edge/')
+        if (this.$store.state.pengrixio.role === 'admin') {
+          this.$router.push('/dashboard/')
+        } else {
+          this.$router.push('/user/')
+        }
       } else {
-        this.$router.push('/login/admin')
+        this.$router.push('/login/')
       }
     }
   },

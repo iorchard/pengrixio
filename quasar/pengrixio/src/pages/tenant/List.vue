@@ -25,15 +25,19 @@
             <div>
               <q-btn color="primary" icon="info"
                 size="sm" round dense
-                @click="getTenantInfo(props.row.name); tenantInfo = true"
+                @click="getTenantInfo(props.row.edge, props.row.name); tenantInfo = true"
               >
-                <q-tooltip>View a tenant</q-tooltip>
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >View a tenant</q-tooltip>
               </q-btn>
               <q-btn color="primary" icon="delete"
                 size="sm" round dense
-                @click="getTenantInfo(props.row.name); confirmDelete = true"
+                @click="getTenantInfo(props.row.edge, props.row.name); confirmDelete = true"
               >
-                <q-tooltip>Delete a tenant.</q-tooltip>
+                <q-tooltip
+                  content-class="bg-purple" content-style="font-size: 16px"
+                >Delete a tenant.</q-tooltip>
               </q-btn>
             </div>
           </q-td>
@@ -65,7 +69,7 @@
           <q-card-section>
             <q-btn flat label="Cancel" color="primary" v-close-popup />
             <q-btn flat label="OK" color="primary" v-close-popup
-              @click="processDelete(tenant.name)"
+              @click="processDelete(tenant.edge, tenant.name)"
             />
           </q-card-section>
         </q-card>
@@ -75,7 +79,7 @@
 </template>
 
 <script>
-import { API_URL } from '../../config'
+import { API_URL, POLLING_INTERVAL } from '../../config'
 export default {
   name: 'TenantList',
   data () {
@@ -104,8 +108,8 @@ export default {
     }
   },
   methods: {
-    processDelete: function (name) {
-      const url = API_URL + `/tenant/${name}/`
+    processDelete: function (edge, name) {
+      const url = API_URL + `/tenant/${edge}/${name}/`
       this.$axios.delete(url)
         .then((response) => {
           this.$q.notify({
@@ -114,7 +118,7 @@ export default {
             message: 'Deleting a tenant is succeeded.',
             icon: 'thumb_up'
           })
-          this.listApps()
+          this.getTenants()
         })
         .catch(() => {
           this.$q.notify({
@@ -125,11 +129,12 @@ export default {
           })
         })
     },
-    getTenantInfo: function (name) {
-      const url = API_URL + `/tenant/${name}/`
+    getTenantInfo: function (edge, name) {
+      const url = API_URL + `/tenant/${edge}/${name}/`
       this.$axios.get(url)
         .then((response) => {
-          this.app = response.data
+          this.tenant = response.data
+          console.log(response.data)
         })
         .catch(() => {
           this.$q.notify({
@@ -140,7 +145,7 @@ export default {
           })
         })
     },
-    listTenants: function () {
+    getTenants: function () {
       const url = API_URL + '/tenant/'
       this.$axios.get(url)
         .then((response) => {
@@ -158,7 +163,11 @@ export default {
   },
   mounted: function () {
     if (!this.$store.state.pengrixio.login) { this.$router.push('/') }
-    this.listTenants()
+    this.getTenants()
+    this.intervalObj = setInterval(this.getEdges, POLLING_INTERVAL)
+  },
+  destroyed: function () {
+    clearInterval(this.intervalObj)
   }
 }
 </script>

@@ -11,10 +11,13 @@ from pengrixio.api.restplus import api
 
 from pengrixio.api.edge.serializers import edgeSerializer
 from pengrixio.api.edge.serializers import edgePostSerializer
+from pengrixio.api.edge.serializers import edgePatchSerializer
 
 from pengrixio.api.edge.bizlogic import get_edge
+from pengrixio.api.edge.bizlogic import get_edge_info
 from pengrixio.api.edge.bizlogic import create_edge
 from pengrixio.api.edge.bizlogic import delete_edge
+from pengrixio.api.edge.bizlogic import update_edge
 
 log = logging.getLogger('pengrixio')
 
@@ -56,12 +59,12 @@ class EdgeItem(Resource):
     @jwt_required
     def get(self, name):
         """Returns the edge information."""
-        l_edge = get_edge(name)
-        if not len(l_edge):
-            d_msg = {'error': 'name {} is not found.'.format(name)}
+        (b_ret, d_edge) = get_edge_info(name)
+        if not b_ret:
+            d_msg = {'error': '{}'.format(d_edge)}
             return d_msg, 404
 
-        return l_edge[0]
+        return d_edge
 
     @api.response(204, "The edge is successfully deleted.")
     @jwt_required
@@ -73,3 +76,17 @@ class EdgeItem(Resource):
             return d_msg, 404
 
         return None, 204
+
+    @api.expect(edgePatchSerializer)
+    @api.response(204, "The edge is successfully updated.")
+    @jwt_required
+    def patch(self, name):
+        """Update the edge information."""
+        data = request.json
+        (b_ret, s_msg) = update_edge(name, data)
+        if not b_ret:
+            d_msg = {'error': s_msg}
+            return d_msg, 404
+
+        return None, 204
+

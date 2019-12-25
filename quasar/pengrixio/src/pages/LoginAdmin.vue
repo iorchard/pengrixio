@@ -65,7 +65,7 @@ export default {
           this.$store.commit('pengrixio/setRefreshToken',
             response.data.refresh_token)
           this.setAxiosHeaders(response.data.token)
-          this.$router.push('/edge/')
+          this.$router.push('/dashboard/')
         })
         .catch(() => {
           console.log('Fail to login')

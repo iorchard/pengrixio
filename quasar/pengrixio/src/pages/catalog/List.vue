@@ -6,17 +6,21 @@
           <q-btn color="primary" icon="add" size="md" rounded dense
             @click="goToCreate" label="Add"
           />
-          <q-tooltip>Create a catalog</q-tooltip>
+          <q-tooltip
+            content-class="bg-purple" content-style="font-size: 16px"
+          >Create a catalog</q-tooltip>
         </div>
       </q-bar>
 
       <q-table
-        title="Catalogs"
+        title="App Hub"
+        grid
         :data="data"
         :columns="columns"
         row-key="name"
         :filter="filter"
         :pagination.sync="pagination"
+        no-data-label="There is no data."
       >
 
         <template v-slot:top-right>
@@ -28,46 +32,63 @@
           </q-input>
         </template>
 
-        <template v-slot:body-cell-functions="props">
-          <q-td :props="props">
-            <div>
-              <q-btn color="primary" icon="info"
-                size="sm" round dense
-                @click="getCatalogInfo(props.row.name); catalogInfo = true"
-              >
-                <q-tooltip>View a catalog</q-tooltip>
-              </q-btn>
-              <q-btn color="primary" icon="delete"
-                size="sm" round dense
-                @click="getCatalogInfo(props.row.name); confirmDelete = true"
-              >
-                <q-tooltip>Delete a catalog</q-tooltip>
-              </q-btn>
-            </div>
-          </q-td>
+        <template v-slot:item="props">
+          <!--<div class="q-pa-md col-xs-12 col-sm-6 col-md-4 col-lg-3">-->
+          <div class="q-pa-md">
+            <q-card>
+              <q-img :src="'statics/' + props.row.logo" basic
+                style="height: 120px;">
+                <div class="absolute-top">
+                  <span class="text-h6">{{ props.row.name }}</span>&nbsp;
+                  <q-btn size="md" round dense color="primary" icon="edit"
+                    @click="goToEdit(props.row.name)">
+                    <q-tooltip content-class="bg-purple"
+                      content-style="font-size: 16px">
+                      Edit
+                    </q-tooltip>
+                  </q-btn>
+                  &nbsp;
+                  <q-btn size="md" round dense color="negative" icon="delete"
+                  @click="getCatalogInfo(props.row.name); confirmDelete = true"
+                  >
+                    <q-tooltip content-class="bg-purple"
+                      content-style="font-size: 16px">
+                      Delete
+                    </q-tooltip>
+                  </q-btn>
+                </div>
+              </q-img>
+              <q-separator />
+              <q-list dense>
+                <q-item
+                  v-for="col in props.cols.filter(col => col.name !== 'name')"
+                  :key="col.name">
+                  <q-item-section>
+                    <q-item-label>{{ col.label }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-item-label caption v-if="col.name === 'type'">
+                      <q-badge class="text-h6" color="primary"
+                        :label="col.value" />
+                    </q-item-label>
+                    <q-item-label caption v-else>
+                      {{ col.value }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-card>
+          </div>
         </template>
-
       </q-table>
-
-      <q-dialog v-model="catalogInfo">
-        <q-card>
-          <q-card-section class="row items-center">
-            <div class="text-h6">Catalog Info</div>
-            <q-space />
-            <q-btn icon="close" flat round dense v-close-popup />
-          </q-card-section>
-
-          <q-card-section>
-            name: {{ catalog.name }}
-          </q-card-section>
-        </q-card>
-      </q-dialog>
 
       <q-dialog v-model="confirmDelete">
         <q-card>
           <q-card-section class="row items-center">
             <q-avatar icon="delete" color="primary" text-color="white" />
-            <span class="q-ml-sm">Are you sure to delete a catalog?</span>
+            <span class="q-ml-sm">
+              Are you sure to delete a catalog {{ catalog.name }}?
+            </span>
           </q-card-section>
 
           <q-card-section>
@@ -99,7 +120,8 @@ export default {
         rowsPerPage: 10
       },
       columns: [
-        { name: 'name', required: true, label: 'User ID', field: 'name' },
+        { name: 'name', required: true, label: 'Name', field: 'name' },
+        { name: 'type', label: 'Type', field: 'type' },
         { name: 'cpu', label: 'CPU(ea)', field: 'cpu_spec' },
         { name: 'memory', label: 'Memory(GiB)', field: 'mem_spec' },
         { name: 'disk', label: 'Disk(GiB)', field: 'disk_spec' },
@@ -108,8 +130,7 @@ export default {
           label: 'Created',
           field: 'createdAt',
           format: (val) => { return val ? new Date(val).toLocaleString() : '' }
-        },
-        { name: 'functions', label: 'Functions', field: 'functions' }
+        }
       ]
     }
   },
@@ -137,6 +158,9 @@ export default {
     },
     goToCreate: function () {
       this.$router.push('/catalog/create/')
+    },
+    goToEdit: function (name) {
+      this.$router.push(`/catalog/${name}/edit`)
     },
     getCatalogInfo: function (name) {
       const url = API_URL + `/catalog/${name}/`

@@ -42,19 +42,41 @@ def get_tenant(edge_name=None, name=None):
                         except etcd.EtcdKeyNotFound as e:
                             log.error(e)
                         else:
+                            d['app'] = list()
                             for child in app_r.children:
                                 if child.value is not None:
                                     app = ast.literal_eval(child.value)
                                     if d['name'] == app['tenant']:
-                                        d['app'] = list()
                                         d_tmp = {'name': app['name'],
+                                                'logo': app['cat_logo'],
+                                                'type': app['cat_type'],
                                                 'user': app['user'],
+                                                'status': app['status'],
                                                 'desc': app['desc']
                                                 }
                                         d['app'].append(d_tmp)
+                            d['app'] = sorted(d['app'], key=lambda k:k['name'])    
                             l_tenant.append(d)
     finally:
         return l_tenant
+
+def get_tenant_info(name):
+    """Get tenant info
+    """
+    d_tenant = dict()
+    if name is None:
+        return (False, 'tenant name should be specified.')
+
+    s_rsc = '{}/tenant/{}'.format(etcdc.prefix, name)
+
+    try:
+        r = etcdc.read(s_rsc)
+    except etcd.EtcdKeyNotFound as e:
+        log.error(e)
+    else:
+        d_tenant = ast.literal_eval(r.value)
+    finally:
+        return (True, d_tenant)
 
 def create_tenant(data):
     """Create tenant
@@ -71,7 +93,7 @@ def create_tenant(data):
     data['createdAt'] = s_created
     data['uid'] = s_uuid
 
-    log.debug(data)
+    # log.debug(data)
     s_rsc = '{}/tenant/{}'.format(etcdc.prefix, data['name'])
     try:
         etcdc.write(s_rsc, data, prevExist=False)

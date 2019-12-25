@@ -80,3 +80,37 @@ def delete_catalog(name):
         t_ret = (True, 'catalog {} is deleted.'.format(name))
     finally:
         return t_ret
+
+
+def update_catalog(name, data):
+    """Update catalog
+    catalogPatchSerializer
+    """
+    data = dict((k, v) for k, v in data.items() if v)
+    t_ret = (False, '')
+    if not name:
+        return t_ret
+
+    s_rsc = '{}/catalog/{}'.format(etcdc.prefix, name)
+    try:
+        r = etcdc.read(s_rsc)
+    except etcd.EtcdKeyNotFound as e:
+        log.error(e)
+        t_ret = (False, e)
+        return t_ret
+
+    d = ast.literal_eval(r.value)
+
+    data['modifiedAt'] = datetime.utcnow().isoformat() + 'Z'
+    d.update(data.items())
+
+    try:
+        etcdc.write(s_rsc, d, prevExist=True)
+    except etcd.EtcdKeyAlreadyExist as e:
+        log.error(e)
+        t_ret = (False, e)
+    else:
+        t_ret = (True, 'catalog {} is updated.'.format(name))
+    finally:
+        return t_ret
+

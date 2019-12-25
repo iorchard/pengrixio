@@ -5,6 +5,8 @@ edgeSerializer = api.model('Edge', {
     'name': fields.String(required=True, description='edge name'),
     'uid': fields.String(required=True, description='edge uuid'),
     'endpoint': fields.String(required=True, description='edge endpoint'),
+    'broker': fields.String(required=True, description='edge broker url'),
+    'broker_ip': fields.String(required=True, description='edge broker ip'),
     'hosts': fields.Integer(required=True, description='edge host #'),
     'tenants': fields.Integer(required=True, description='edge tenant #'),
     'apps': fields.Integer(required=True, description='edge app #'),
@@ -21,9 +23,18 @@ edgeSerializer = api.model('Edge', {
     'desc': fields.String(required=True, description='edge base image'),
     'status': fields.String(required=True, description='edge status'),
     'createdAt': fields.DateTime(required=True, description='edge created'),
+    'modifiedAt': fields.DateTime(required=True, description='edge modified'),
 })
 edgePostSerializer = api.model('CreateEdge', {
     'name': fields.String(required=True, description='edge name'),
     'endpoint': fields.String(required=True, description='edge endpoint'),
+    'broker': fields.String(required=True, description='edge broker url'),
+    'broker_ip': fields.String(required=True, description='edge broker ip'),
+    'desc': fields.String(description='edge base image'),
+})
+edgePatchSerializer = api.model('ModifyEdge', {
+    'endpoint': fields.String(required=True, description='edge endpoint'),
+    'broker': fields.String(required=True, description='edge broker url'),
+    'broker_ip': fields.String(required=True, description='edge broker ip'),
     'desc': fields.String(description='edge base image'),
 })
