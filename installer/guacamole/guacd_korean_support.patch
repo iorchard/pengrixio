@@ -1,0 +1,33 @@
+diff -uNr a/src/protocols/rdp/Makefile.am b/src/protocols/rdp/Makefile.am
+--- a/src/protocols/rdp/Makefile.am	2018-01-09 12:14:02.000000000 +0900
++++ b/src/protocols/rdp/Makefile.am	2019-12-05 16:46:53.185698920 +0900
+@@ -255,6 +255,7 @@
+     $(srcdir)/keymaps/fr_ch_qwertz.keymap \
+     $(srcdir)/keymaps/it_it_qwerty.keymap \
+     $(srcdir)/keymaps/ja_jp_qwerty.keymap \
++    $(srcdir)/keymaps/ko_kr_qwerty.keymap \
+     $(srcdir)/keymaps/sv_se_qwerty.keymap
+ 
+ _generated_keymaps.c: $(rdp_keymaps)
+diff -uNr a/src/protocols/rdp/Makefile.in b/src/protocols/rdp/Makefile.in
+--- a/src/protocols/rdp/Makefile.in	2018-01-09 12:23:29.000000000 +0900
++++ b/src/protocols/rdp/Makefile.in	2019-12-05 16:47:04.769536840 +0900
+@@ -773,6 +773,7 @@
+     $(srcdir)/keymaps/fr_ch_qwertz.keymap \
+     $(srcdir)/keymaps/it_it_qwerty.keymap \
+     $(srcdir)/keymaps/ja_jp_qwerty.keymap \
++    $(srcdir)/keymaps/ko_kr_qwerty.keymap \
+     $(srcdir)/keymaps/sv_se_qwerty.keymap
+ 
+ EXTRA_DIST = \
+diff -uNr a/src/protocols/rdp/keymaps/ko_kr_qwerty.keymap b/src/protocols/rdp/keymaps/ko_kr_qwerty.keymap
+--- a/src/protocols/rdp/keymaps/ko_kr_qwerty.keymap	1970-01-01 09:00:00.000000000 +0900
++++ b/src/protocols/rdp/keymaps/ko_kr_qwerty.keymap	2019-12-05 16:47:23.613012840 +0900
+@@ -0,0 +1,7 @@
++parent  "en-us-qwerty"
++name    "ko-kr-qwerty"
++freerdp "KBD_KOREAN"
++
++# Hangul
++map +ext   0xf1 ~ 0xff34 # Hanja
++map +ext   0xf2 ~ 0xff31 # Hangul

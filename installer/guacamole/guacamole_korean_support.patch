@@ -1,0 +1,11 @@
+diff -uNr a/guacamole-common-js/all.js b/guacamole-common-js/all.js
+--- a/guacamole-common-js/all.js	2018-01-09 04:19:10.000000000 +0900
++++ b/guacamole-common-js/all.js	2019-12-05 17:41:39.461779479 +0900
+@@ -5550,6 +5550,7 @@
+         18:  [0xFFE9, 0xFFE9, 0xFE03], // alt
+         19:  [0xFF13], // pause/break
+         20:  [0xFFE5], // caps lock
++        21:  [0xFF31], // hangul
+         27:  [0xFF1B], // escape
+         32:  [0x0020], // space
+         33:  [0xFF55, 0xFF55, 0xFF55, 0xFFB9], // page up     / KP 9
